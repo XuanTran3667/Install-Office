@@ -53,11 +53,11 @@ if (-not (Test-Path $rar)) {
     exit
 }
 
-# Buoc 3: Xac nhan tai file ISO Office
-Wait-Yes "➡️ Ban co muon tai file Office (.img) tu Google Drive?"
+# Buoc 3: Xac nhan tai file RAR Office
+Wait-Yes "➡️ Ban co muon tai file Office (.rar) tu Google Drive?"
 $fileId = "1o4q5VKDpVKifveXv-CTxn5GW9W-omxJz"
-$out = "$temp\ProPlusRetail.img"
-Write-Host "⬇️ Dang tai file Office (.img)..."
+$out = "$temp\office.rar"
+Write-Host "⬇️ Dang tai file Office (.rar)..."
 Download-GDriveFile -fileId $fileId -destination $out
 
 if (-not (Test-Path $out)) {
@@ -66,14 +66,14 @@ if (-not (Test-Path $out)) {
     exit
 }
 
-# Buoc 4: Giai nen file img bang WinRAR
-Wait-Yes "➡️ Giai nen file .img bang WinRAR?"
+# Buoc 4: Giai nen file rar bang WinRAR
+Wait-Yes "➡️ Giai nen file .rar bang WinRAR?"
 Write-Host "📦 Dang giai nen..."
-Start-Process -FilePath $rar -ArgumentList "x -o+ ProPlusRetail.img *.*" -Wait
+Start-Process -FilePath $rar -ArgumentList "x -o+ office.rar *.*" -Wait
 
 # Buoc 5: Kiem tra setup
-$setup = "$temp\setup.exe"
-$config = "$temp\config.xml"
+$setup = "$temp\office\setup.exe"
+$config = "$temp\office\config.xml"
 if (-not (Test-Path $setup) -or -not (Test-Path $config)) {
     Write-Host "❌ Khong tim thay setup.exe hoac config.xml." -ForegroundColor Red
     Read-Host "Nhan Enter de thoat..."
