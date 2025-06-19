@@ -30,15 +30,7 @@ if (Test-Path $temp) {
 New-Item -ItemType Directory -Path $temp | Out-Null
 Set-Location $temp
 
-# Buoc 2: Kiem tra WinRAR
-$rar = "$env:ProgramFiles\WinRAR\WinRAR.exe"
-if (-not (Test-Path $rar)) {
-    Write-Host "❌ Khong tim thay WinRAR. Hay cai dat WinRAR truoc." -ForegroundColor Red
-    Read-Host "Nhan Enter de thoat..."
-    exit
-}
-
-# Buoc 3: Xac nhan tai file ISO Office
+# Buoc 2: Xac nhan tai file ISO Office
 Wait-Yes "➡️ Ban co muon tai file Office .img tu Microsoft?"
 $url = "https://officecdn.microsoft.com/db/492350F6-3A01-4F97-B9C0-C7C6DDF67D60/media/en-us/ProPlusRetail.img"
 $out = "$temp\ProPlusRetail.img"
@@ -51,24 +43,28 @@ if (-not (Test-Path $out)) {
     exit
 }
 
-# Buoc 4: Giai nen file img bang WinRAR
-Wait-Yes "➡️ Giai nen file .img bang WinRAR?"
-Write-Host "📦 Dang giai nen..."
-Start-Process -FilePath $rar -ArgumentList "x -o+ ProPlusRetail.img *.*" -Wait
+# Buoc 3: Mount file IMG
+Wait-Yes "➡️ Mount file .img?"
+$mount = Mount-DiskImage -ImagePath $out -PassThru
+$driveLetter = ($mount | Get-Volume).DriveLetter + ":"
 
-# Buoc 5: Kiem tra setup
-$setup = "$temp\setup.exe"
-$config = "$temp\config.xml"
+# Buoc 4: Kiem tra setup va config.xml
+$setup = "$driveLetter\setup.exe"
+$config = "$driveLetter\config.xml"
 if (-not (Test-Path $setup) -or -not (Test-Path $config)) {
-    Write-Host "❌ Khong tim thay setup.exe hoac config.xml." -ForegroundColor Red
+    Write-Host "❌ Khong tim thay setup.exe hoac config.xml trong file IMG." -ForegroundColor Red
     Read-Host "Nhan Enter de thoat..."
+    Dismount-DiskImage -ImagePath $out
     exit
 }
 
-# Buoc 6: Cai dat
+# Buoc 5: Cai dat
 Wait-Yes "➡️ Bat dau cai dat Office?"
 Write-Host "🚀 Dang tien hanh cai dat..."
 Start-Process -FilePath $setup -ArgumentList "/configure config.xml" -Wait
+
+# Buoc 6: Dismount file IMG
+Dismount-DiskImage -ImagePath $out
 
 Write-Host "`n✅ Da hoan tat qua trinh cai dat Office!" -ForegroundColor Green
 Read-Host "Nhan Enter de ket thuc..."
