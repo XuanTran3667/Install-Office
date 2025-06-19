@@ -1,0 +1,65 @@
+# Install-Office.ps1 - Cài Office 2021 Pro Plus tự động
+Write-Host "`n=== 🏢 BAT DAU CAI OFFICE 2021 PRO PLUS ===`n" -ForegroundColor Cyan
+
+function Wait-For-Yes($message) {
+    do {
+        $input = Read-Host "$message (Y/N)"
+        if ($input -eq 'Y' -or $input -eq 'y') { return $true }
+        elseif ($input -eq 'N' -or $input -eq 'n') {
+            Write-Host "❌ Da huy thao tac." -ForegroundColor Red
+            exit
+        }
+    } while ($true)
+}
+
+# B1. Tao thu muc tam
+$temp = "$env:TEMP\office_auto_install"
+if (Test-Path $temp) { Remove-Item -Recurse -Force $temp }
+New-Item -Path $temp -ItemType Directory | Out-Null
+Set-Location $temp
+
+# B2. Kiem tra quyen admin
+if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole("Administrator")) {
+    Write-Host "❌ Vui long chay script bang quyen Administrator!" -ForegroundColor Red
+    pause; exit
+}
+
+# B3. Kiem tra WinRAR
+$winrar = "$env:ProgramFiles\WinRAR\WinRAR.exe"
+if (-not (Test-Path $winrar)) {
+    Write-Host "❌ Khong tim thay WinRAR. Hay cai WinRAR truoc." -ForegroundColor Red
+    pause; exit
+}
+
+# B4. Tai office.rar
+Wait-For-Yes "➡️ Tiep tuc tai file Office.rar?"
+$url = "https://drive.usercontent.google.com/download?id=1o4q5VKDpVKifveXv-CTxn5GW9W-omxJz&export=download&authuser=0&confirm=t&uuid=b168a87d-4398-4059-9496-09598ebefe76&at=AN8xHoqhgSmMIMFwsIjsD-WilROH%3A1750332612334"
+$out = "$temp\office.rar"
+Write-Host "⬇️ Dang tai file Office..."
+Invoke-WebRequest -Uri $url -OutFile $out
+
+if (!(Test-Path $out)) {
+    Write-Host "❌ Loi: khong tai duoc file Office.rar" -ForegroundColor Red
+    pause; exit
+}
+
+# B5. Giai nen
+Wait-For-Yes "➡️ Tiep tuc giai nen file Office.rar?"
+Write-Host "🗂️ Dang giai nen..."
+Start-Process -FilePath $winrar -ArgumentList "x -o+ office.rar *.*" -Wait
+
+# B6. Kiem tra setup
+$setup = "$temp\office\setup.exe"
+$config = "$temp\office\config.xml"
+if (!(Test-Path $setup) -or !(Test-Path $config)) {
+    Write-Host "❌ setup.exe hoac config.xml khong ton tai." -ForegroundColor Red
+    pause; exit
+}
+
+# B7. Cai dat Office
+Wait-For-Yes "➡️ Tiep tuc cai dat Office?"
+Write-Host "🚀 Dang cai dat Office..."
+Start-Process -FilePath $setup -ArgumentList "/configure config.xml" -Wait
+
+Write-Host "`n✅ Cai dat hoan tat!" -ForegroundColor Green
+pause
