@@ -12,6 +12,21 @@ function Wait-Yes($msg) {
     } while ($true)
 }
 
+# Ham tai file Google Drive bang fileId
+function Download-GDriveFile($fileId, $destination) {
+    $confirmUrl = "https://docs.google.com/uc?export=download&id=$fileId"
+    $session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
+    $response = Invoke-WebRequest -Uri $confirmUrl -WebSession $session -UseBasicParsing
+
+    if ($response.Content -match 'confirm=([0-9A-Za-z-_]+)') {
+        $confirm = $matches[1]
+        $downloadUrl = "$confirmUrl&confirm=$confirm"
+        Invoke-WebRequest -Uri $downloadUrl -WebSession $session -OutFile $destination -UseBasicParsing
+    } else {
+        Invoke-WebRequest -Uri $confirmUrl -WebSession $session -OutFile $destination -UseBasicParsing
+    }
+}
+
 # Kiem tra quyen Admin chinh xac
 $IsAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 if (-not $IsAdmin) {
@@ -38,23 +53,8 @@ if (-not (Test-Path $rar)) {
     exit
 }
 
-# Buoc 3: Xac nhan tai file ISO Office tu Google Drive (su dung fileId)
+# Buoc 3: Xac nhan tai file ISO Office
 Wait-Yes "➡️ Ban co muon tai file Office (.img) tu Google Drive?"
-
-function Download-GDriveFile($fileId, $destination) {
-    $confirmUrl = "https://docs.google.com/uc?export=download&id=$fileId"
-    $session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
-    $response = Invoke-WebRequest -Uri $confirmUrl -WebSession $session -UseBasicParsing
-
-    if ($response.Content -match 'confirm=([0-9A-Za-z-_]+)') {
-        $confirm = $matches[1]
-        $downloadUrl = "$confirmUrl&confirm=$confirm"
-        Invoke-WebRequest -Uri $downloadUrl -WebSession $session -OutFile $destination -UseBasicParsing
-    } else {
-        Invoke-WebRequest -Uri $confirmUrl -WebSession $session -OutFile $destination -UseBasicParsing
-    }
-}
-
 $fileId = "1o4q5VKDpVKifveXv-CTxn5GW9W-omxJz"
 $out = "$temp\ProPlusRetail.img"
 Write-Host "⬇️ Dang tai file Office (.img)..."
