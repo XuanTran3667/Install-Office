@@ -38,27 +38,27 @@ if (-not (Test-Path $rar)) {
     exit
 }
 
-# Buoc 3: Xac nhan tai file Office
-Wait-Yes "➡️ Ban co muon tai file office.rar?"
+# Buoc 3: Xac nhan tai file ISO Office
+Wait-Yes "➡️ Ban co muon tai file Office .img tu Microsoft?"
 $url = "https://officecdn.microsoft.com/db/492350F6-3A01-4F97-B9C0-C7C6DDF67D60/media/en-us/ProPlusRetail.img"
-$out = "$temp\office.rar"
-Write-Host "⬇️ Dang tai file office.rar..."
-Invoke-WebRequest -Uri $url -OutFile $out
+$out = "$temp\ProPlusRetail.img"
+Write-Host "⬇️ Dang tai file Office (.img)..."
+Invoke-WebRequest -Uri $url -OutFile $out -UseBasicParsing
 
 if (-not (Test-Path $out)) {
-    Write-Host "❌ Loi khi tai file." -ForegroundColor Red
+    Write-Host "❌ Loi khi tai file Office." -ForegroundColor Red
     Read-Host "Nhan Enter de thoat..."
     exit
 }
 
-# Buoc 4: Giai nen
-Wait-Yes "➡️ Giai nen file office.rar?"
+# Buoc 4: Giai nen file img bang WinRAR
+Wait-Yes "➡️ Giai nen file .img bang WinRAR?"
 Write-Host "📦 Dang giai nen..."
-Start-Process -FilePath $rar -ArgumentList "x -o+ office.rar *.*" -Wait
+Start-Process -FilePath $rar -ArgumentList "x -o+ ProPlusRetail.img *.*" -Wait
 
 # Buoc 5: Kiem tra setup
-$setup = "$temp\office\setup.exe"
-$config = "$temp\office\config.xml"
+$setup = "$temp\setup.exe"
+$config = "$temp\config.xml"
 if (-not (Test-Path $setup) -or -not (Test-Path $config)) {
     Write-Host "❌ Khong tim thay setup.exe hoac config.xml." -ForegroundColor Red
     Read-Host "Nhan Enter de thoat..."
