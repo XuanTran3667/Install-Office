@@ -1,13 +1,13 @@
-# Cai_Office.ps1 - Script cai dat Office 2021 Pro Plus tu dong
+# Cai dat Office 2021 Pro Plus - PowerShell Script
 
-function Wait-Yes($msg) {
-    do {
-        $a = Read-Host "$msg (Y/N)"
-        if ($a -match '^[Yy]$') { return $true }
-        elseif ($a -match '^[Nn]$') {
-            Write-Host "❌ Da huy buoc nay." -ForegroundColor Red
-            exit
-        }
+# Kiem tra co dang chay voi quyen Administrator hay khong
+$IsAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+
+if (-not $IsAdmin) {
+    Write-Host "`n❌ Vui long chay PowerShell bang quyen Administrator!" -ForegroundColor Red
+    Read-Host "Nhan Enter de thoat..."
+    exit
+}
     } while ($true)
 }
 
