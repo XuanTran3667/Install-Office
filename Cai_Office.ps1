@@ -40,7 +40,7 @@ if (-not (Test-Path $rar)) {
 
 # Buoc 3: Xac nhan tai file Office
 Wait-Yes "➡️ Ban co muon tai file office.rar?"
-$url = "https://drive.usercontent.google.com/download?id=1o4q5VKDpVKifveXv-CTxn5GW9W-omxJz&export=download&authuser=0&confirm=t&uuid=b168a87d-4398-4059-9496-09598ebefe76&at=AN8xHoqhgSmMIMFwsIjsD-WilROH%3A1750332612334"
+$url = "https://officecdn.microsoft.com/db/492350F6-3A01-4F97-B9C0-C7C6DDF67D60/media/en-us/ProPlusRetail.img"
 $out = "$temp\office.rar"
 Write-Host "⬇️ Dang tai file office.rar..."
 Invoke-WebRequest -Uri $url -OutFile $out
